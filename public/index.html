@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+	<title>Sounds from the cloud</title>
+
+	<!--for mobile devices to scale -->
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="/bower_components/bootswatch/darkly/bootstrap.min.css"/>
+	<link rel="stylesheet" href="style.css"/>
+
+</head>
+<body>
+
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+	  <div class="container">
+	    <div class="navbar-header">
+	      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+	        <span class="sr-only">Toggle navigation</span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	      </button>
+	      <a class="navbar-brand" href="#">Sounds from the cloud</a>
+	    </div>
+	    <div id="navbar" class="collapse navbar-collapse">
+	      <ul class="nav navbar-nav">
+	        <li class="active"><a href="#">Home</a></li>
+	        <li><a href="#about">About</a></li>
+	        <li><a href="#contact">Contact</a></li>
+	      </ul>
+	    </div><!--/.nav-collapse -->
+	  </div>
+	</nav>
+
+	<div class="container" ng-controller="MainCtrl">
+
+		<div class="starter-template">
+			<h1>Paste your soundcloud link below</h1>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-6 col-xs-offset-3">
+			    <form class="form-group has-success has-feedback ">
+			      <div class="form-group">
+					
+					<!--should change input to green with a green checkmark next to it when valid -->
+				     <input type="text" class="form-control" ng-model="url" placeholder="Any soundcloud link here">
+					
+			        <label for="questionTime">Limit number of songs</label>
+			        <div class="input-group col-xs-4">
+			            <span class="input-group-btn">
+			                <button class="btn btn-default" tooltip="Subtract 50 derp" type="button" ng-click="subtractLimit()">
+			                    <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+			                </button>                                
+			            </span>
+			            <input type="number" min="1" class="form-control" ng-model="limit" placeholder="limit # of songs" size="1">
+			            <span class="input-group-btn">
+			                <button class="btn btn-default" tooltip="Add 50 derp" type="button" ng-click="addLimit()">
+			                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+			                </button>
+			            </span>
+			        </div>
+
+			        <button class="btn btn-primary" type="button" ng-click="getDownloadLinks()"> Get em'</button>
+			      </div>
+
+			    </form>
+		    </div>
+	    </div>
+
+<!-- 		<div class="row">
+		  <div class="col-lg-6">
+		    <div class="input-group">
+		      <input type="text" class="form-control" placeholder="Any soundcloud link here">
+		      <span class="input-group-btn">
+		        <button class="btn btn-default" type="button">Go!</button>
+		      </span>
+		    </div>
+		  </div>
+		</div>
+
+		<div class="row">
+		  <div class="col-lg-6">
+		    <div class="input-group">
+		      <input type="text" class="form-control" placeholder="limit of songs to download if a playlist?">
+		      <span class="input-group-btn">
+		        <button class="btn btn-default" type="button">Go!</button>
+		      </span>
+		    </div>
+		  </div>
+		</div>
+ -->
+	</div><!-- /.container -->
+
+	<script src="/bower_components/angular/angular.min.js"></script>
+	<script src="/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+  	<script src='/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js'></script>
+  	<script src='main.js'></script>
+  	<script src='routes.js'></script>
+
+
+</body>
+</html>
