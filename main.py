@@ -16,7 +16,7 @@ import os
 
 def main():
     
-    url = raw_input("Hello, please paste your soundcloud url below (only support favorites atm)" + os.linesep)
+    url = raw_input("Hello, please paste your soundcloud url below" + os.linesep)
     path = raw_input("Paste the path on your computer to download files to" + os.linesep)
 
     sound = Sounds(url, path)

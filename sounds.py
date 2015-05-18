@@ -42,9 +42,13 @@ class Sounds:
     def dlfile(self, url,track, folder):        
 
         title = track["title"]
-        title = re.sub(r"(<|>|:|/|\\|\||\?|\*|\.|\")", "_", title)
+        
+        #title = re.sub(r"[\\\/:\*\?""'<>|]", "_", title)
+        title = re.sub(r"(<|>|:|/|\\|\||\?|\*|\"|\.)", "_", title)
         artist = track["user"]["username"]
         
+        #removing special char's from file name
+        #filetitle = re.sub('[^A-Za-z0-9]+', '', title)
         file = folder+"/"+title+".mp3" 
         
 
@@ -68,36 +72,49 @@ class Sounds:
             if os.path.isfile(file):
                 return
 
-            # Open our local file for writing
-            with open(file, "wb") as local_file:
-                local_file.write(f.read())
-                print "downloading " + url
-
+            #while loop just in case to catch file-name errors if they slip by.
+            while True:
                 try:
-                    mp3 = MP3(file, ID3=EasyID3)
-                except mutagen.mp3.HeaderNotFoundError:
-                    print "not an mp3, but thats ok cuz it has data??????"
-                    print title
-                    return
+                    # Open our local file for writing
+                    with open(file, "wb") as local_file:
+                        local_file.write(f.read())
+                        print "downloading " + url
 
-                try:
-                    mp3.add_tags(ID3=EasyID3)
-                except mutagen.id3.error:
-                    print("has tags")
+                        try:
+                            mp3 = MP3(file, ID3=EasyID3)
+                        except mutagen.mp3.HeaderNotFoundError:
+                            print "not an mp3, but thats ok cuz it has data??????"
+                            print title
+                            return
 
-                mp3['title'] = title
-                mp3['author'] = artist
-                mp3['artist'] = artist
-                mp3.save()
-                # mp3 = eyed3.load(file)
-                # if mp3.tag is None:
-                #     print "tag is none"
-                #     mp3.tag = eyed3.id3.Tag()
-                #     mp3.tag.file_info = eyed3.id3.FileInfo(file)
-                # mp3.tag.artist = artist
-                # mp3.tag.title = title 
-                # mp3.tag.track_num = index + 1
-                # mp3.tag.save()
+                        try:
+                            mp3.add_tags(ID3=EasyID3)
+                        except mutagen.id3.error:
+                            print("has tags")
+
+                        mp3['title'] = title
+                        mp3['author'] = artist
+                        mp3['artist'] = artist
+                        mp3.save()
+                        # mp3 = eyed3.load(file)
+                        # if mp3.tag is None:
+                        #     print "tag is none"
+                        #     mp3.tag = eyed3.id3.Tag()
+                        #     mp3.tag.file_info = eyed3.id3.FileInfo(file)
+                        # mp3.tag.artist = artist
+                        # mp3.tag.title = title 
+                        # mp3.tag.track_num = index + 1
+                        # mp3.tag.save()
+
+                except IOError:
+                    #if get this error, means invalid file name
+                    #LAST RESORT..
+                    #remove everything except letters and numbers.
+                    title = re.sub('[^a-zA-Z0-9\n\.]', "", title)
+                    file = folder+"/"+title+".mp3"
+                    continue
+                break 
+
 
         #handle errors
         except HTTPError, e:
