@@ -4,17 +4,30 @@ import json
 import os
 
 
+import sys
+from PyQt4 import QtCore, QtGui
+from PyQt4.QtGui import QApplication, QDialog, QFileDialog
+from PyQt4.QtCore import QObject, pyqtSlot
+from gui import Ui_Form
+
+#pyuic4 -x sounds.ui -o gui.py
+#link gui 
+#http://stackoverflow.com/a/9526625/3590748
+#use code
+#http://stackoverflow.com/questions/15362624/how-do-you-execute-pyqt-ui-code-in-python 
+
     
 #url to test resolver
 # #http://api.soundcloud.com/resolve.json?url=https://soundcloud.com/jamkins/sets/theabyss&client_id=c585c5f24b092caec68984885cf2b0db
-# res = urlopen("http://api.soundcloud.com/resolve.json?url=http://soundcloud.com/ximsergio&client_id="+YOUR_CLIENT_ID)
-# user = json.load(res)
-# res.close()
-# userID = str(user["id"])
-# print userID
-# #url to test in browser http://api.soundcloud.com/users/31175757/favorites.json?client_id=c585c5f24b092caec68984885cf2b0db&limit=50&offset=0
 
 def main():
+
+    import sys
+    app = QtGui.QApplication(sys.argv)
+    window = Window()
+    window.show()
+    sys.exit(app.exec_())
+ 
     
     url = raw_input("Hello, please paste your soundcloud url below" + os.linesep)
     path = raw_input("Paste the path on your computer to download files to" + os.linesep)
@@ -31,9 +44,19 @@ def main():
         f.write(error["error"])
         f.write("\n\n")
 
-    #write to file permalink_url and error
 
+class Window(QtGui.QWidget):
+    def __init__(self):
+        QtGui.QWidget.__init__(self)
+        self.ui = Ui_Form()
+        self.ui.setupUi(self)
 
+    def getDir(self):
+        directory = QFileDialog.getExistingDirectory()
+        print directory
+        self.ui.dirLine.setText(directory)
 
 if __name__ == "__main__":
     main()
+
+
