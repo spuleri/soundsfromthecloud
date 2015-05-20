@@ -22,4 +22,5 @@ python main.py
 * Install via their instructions^
 
 ##Coming soon~
-Simple GUI in [kivy](http://kivy.org/#home) or [tkinter](TkInter)
+* Simple GUI in [kivy](http://kivy.org/#home) or [tkinter](TkInter)
+* Get SC thumbnail and set as cover photo!
