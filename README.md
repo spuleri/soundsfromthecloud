@@ -1,5 +1,5 @@
 # soundsfromthecloud
-A (commandline) tool (soon to have a gui) to download songs from SoundCloud.  
+A tool to download songs from SoundCloud.  
 
 ##Functionality
 <ul>
@@ -20,7 +20,8 @@ python main.py
 ##Dependncies
 * Uses [mutagen](https://mutagen.readthedocs.org/en/latest/) for mp3 ID3 metadata
 * Install via their instructions^
+* The GUI is built with PyQt; [download here](http://www.riverbankcomputing.com/software/pyqt/download)
 
 ##Coming soon~
-* Simple GUI in [kivy](http://kivy.org/#home) or [tkinter](TkInter)
+* Get SC description and set as lyrics
 * Get SC thumbnail and set as cover photo!
