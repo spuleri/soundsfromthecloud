@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'sounds.ui'
 #
-# Created: Tue May 19 23:12:53 2015
+# Created: Wed May 20 21:34:01 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -49,7 +49,7 @@ class Ui_Form(object):
         self.fileButton.setObjectName(_fromUtf8("fileButton"))
         self.horizontalLayout_3.addWidget(self.fileButton)
         self.layoutWidget1 = QtGui.QWidget(Form)
-        self.layoutWidget1.setGeometry(QtCore.QRect(51, 181, 421, 73))
+        self.layoutWidget1.setGeometry(QtCore.QRect(51, 181, 421, 22))
         self.layoutWidget1.setObjectName(_fromUtf8("layoutWidget1"))
         self.horizontalLayout = QtGui.QHBoxLayout(self.layoutWidget1)
         self.horizontalLayout.setMargin(0)
@@ -57,20 +57,22 @@ class Ui_Form(object):
         self.label = QtGui.QLabel(self.layoutWidget1)
         self.label.setObjectName(_fromUtf8("label"))
         self.horizontalLayout.addWidget(self.label)
-        self.urlLine = QtGui.QTextEdit(self.layoutWidget1)
-        self.urlLine.setObjectName(_fromUtf8("urlLine"))
-        self.horizontalLayout.addWidget(self.urlLine)
+        self.lineEdit = QtGui.QLineEdit(self.layoutWidget1)
+        self.lineEdit.setObjectName(_fromUtf8("lineEdit"))
+        self.horizontalLayout.addWidget(self.lineEdit)
 
         self.retranslateUi(Form)
         QtCore.QObject.connect(self.fileButton, QtCore.SIGNAL(_fromUtf8("clicked()")), Form.getDir)
+        QtCore.QObject.connect(self.downloadButton, QtCore.SIGNAL(_fromUtf8("clicked()")), Form.downloadButton)
+        QtCore.QObject.connect(self.lineEdit, QtCore.SIGNAL(_fromUtf8("textChanged(QString)")), Form.urlPasted)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(_translate("Form", "Form", None))
         self.downloadButton.setText(_translate("Form", "Download!", None))
-        self.label_2.setText(_translate("Form", "Directory to download", None))
+        self.label_2.setText(_translate("Form", "Directory to download:", None))
         self.fileButton.setText(_translate("Form", "...", None))
-        self.label.setText(_translate("Form", "SoundCloud URL", None))
+        self.label.setText(_translate("Form", "SoundCloud URL:", None))
 
 
 if __name__ == "__main__":

@@ -29,11 +29,12 @@ def main():
     sys.exit(app.exec_())
  
     
-    url = raw_input("Hello, please paste your soundcloud url below" + os.linesep)
-    path = raw_input("Paste the path on your computer to download files to" + os.linesep)
-
-    sound = Sounds(url, path)
-    sound.download()
+    #url = raw_input("Hello, please paste your soundcloud url below" + os.linesep)
+    #path = raw_input("Paste the path on your computer to download files to" + os.linesep)
+    # url = window.directory
+    # print url
+    # sound = Sounds(url, path)
+    # sound.download()
 
     print "finished, but there were " + str(len(sound.errors)) + " errors. Check the log file" + os.linesep
 
@@ -46,7 +47,7 @@ def main():
 
 
 class Window(QtGui.QWidget):
-    def __init__(self):
+    def __init__(self, directory="", url="", readyToGo = False):
         QtGui.QWidget.__init__(self)
         self.ui = Ui_Form()
         self.ui.setupUi(self)
@@ -54,7 +55,30 @@ class Window(QtGui.QWidget):
     def getDir(self):
         directory = QFileDialog.getExistingDirectory()
         print directory
-        self.ui.dirLine.setText(directory)
+        self.directory = directory
+        self.ui.dirLine.setText(self.directory)
+
+    def urlPasted(self, QString):
+        string = str(QString)
+        if "https://soundcloud.com" in string:
+            self.url = string
+            self.readyToGo = True
+            print string
+
+    def downloadButton(self):
+        if self.readyToGo:
+            sound = Sounds(self.url, self.directory)
+            status = sound.download()
+            #returns true once download finishes
+            if status:
+                print 'lol'
+                #show dialog?
+
+
+        else:
+            print "u aint ready fuckboi"
+
+
 
 if __name__ == "__main__":
     main()

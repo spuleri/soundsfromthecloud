@@ -41,7 +41,7 @@
       <item>
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>Directory to download</string>
+         <string>Directory to download:</string>
         </property>
        </widget>
       </item>
@@ -65,22 +65,26 @@
      <x>51</x>
      <y>181</y>
      <width>421</width>
-     <height>73</height>
+     <height>22</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QLabel" name="label">
       <property name="text">
-       <string>SoundCloud URL</string>
+       <string>SoundCloud URL:</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QTextEdit" name="urlLine"/>
+     <widget class="QLineEdit" name="lineEdit"/>
     </item>
    </layout>
   </widget>
+  <zorder>downloadButton</zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>lineEdit</zorder>
  </widget>
  <resources/>
  <connections>
@@ -100,8 +104,58 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>downloadButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Form</receiver>
+   <slot>downloadButton()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>275</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>323</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>Form</receiver>
+   <slot>urlPasted()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>211</x>
+     <y>194</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>226</x>
+     <y>238</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>downloadButton</sender>
+   <signal>clicked()</signal>
+   <receiver>lineEdit</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>233</x>
+     <y>342</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>182</x>
+     <y>184</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>getDir()</slot>
+  <slot>downloadButton()</slot>
+  <slot>urlPasted()</slot>
  </slots>
 </ui>

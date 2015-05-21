@@ -175,7 +175,7 @@ class Sounds:
                 #else, dl streaming file @ 128kbps
                 else:
                     self.dlfile(like["stream_url"] + "?client_id=" + YOUR_CLIENT_ID, like, folder)
-            return
+            return True
 
         #if playlist
         if self.set:
@@ -202,7 +202,7 @@ class Sounds:
                 #else, dl streaming file @ 128kbps
                 else:
                     self.dlfile(track["stream_url"] + "?client_id=" + YOUR_CLIENT_ID,track, folder) 
-            return
+            return True
 
         #if single track
         if self.song:
@@ -222,5 +222,5 @@ class Sounds:
             #else, dl streaming file @ 128kbps
             else:
                 self.dlfile(track["stream_url"] + "?client_id=" + YOUR_CLIENT_ID, track, folder)
-            return
+            return True
 
