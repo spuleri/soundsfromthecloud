@@ -39,7 +39,7 @@ class Sounds:
         #else, it is a song
         else: self.song = True
 
-    def dlfile(self, url,track, folder):        
+    def dlfile(self, url,track, folder, textBox):        
 
         title = track["title"]
         
@@ -79,6 +79,7 @@ class Sounds:
                     with open(file, "wb") as local_file:
                         local_file.write(f.read())
                         print "downloading " + url
+                        textBox.statusTextEdit.appendPlainText("Downloading " + title + " - " + artist )
 
                         try:
                             mp3 = MP3(file, ID3=EasyID3)
@@ -124,7 +125,7 @@ class Sounds:
             track["error"] = "URL Error:" +  str(e.reason) + " " + url
             self.errors.append(track)
 
-    def download(self):
+    def download(self, textBox):
         #if playlist, gives you info with playlist info, "track_count" and array "tracks" with all tracks
         #if likes, gives only array with 50 likes
         #if track, gives track lol
@@ -167,14 +168,14 @@ class Sounds:
 
                 #if downloadable, get the higher quality, artist provided dl
                 if like["downloadable"]:
-                    self.dlfile(like["download_url"] + "?client_id=" + YOUR_CLIENT_ID, like, folder)
+                    self.dlfile(like["download_url"] + "?client_id=" + YOUR_CLIENT_ID, like, folder, textBox)
                 
                 elif "stream_url" not in like:
                     like["error"] = "doesn't have a stream url"
                     self.errors.append(like)
                 #else, dl streaming file @ 128kbps
                 else:
-                    self.dlfile(like["stream_url"] + "?client_id=" + YOUR_CLIENT_ID, like, folder)
+                    self.dlfile(like["stream_url"] + "?client_id=" + YOUR_CLIENT_ID, like, folder, textBox)
             return True
 
         #if playlist
@@ -195,13 +196,13 @@ class Sounds:
 
                 #if downloadable, get the higher quality, artist provided dl
                 if track["downloadable"]:
-                    self.dlfile(track["download_url"] + "?client_id=" + YOUR_CLIENT_ID, track, folder)
+                    self.dlfile(track["download_url"] + "?client_id=" + YOUR_CLIENT_ID, track, folder, textBox)
                 elif "stream_url" not in track:
                     track["error"] = "doesn't have a stream url"
                     self.errors.append(track)
                 #else, dl streaming file @ 128kbps
                 else:
-                    self.dlfile(track["stream_url"] + "?client_id=" + YOUR_CLIENT_ID,track, folder) 
+                    self.dlfile(track["stream_url"] + "?client_id=" + YOUR_CLIENT_ID,track, folder, textBox) 
             return True
 
         #if single track
@@ -218,9 +219,9 @@ class Sounds:
             
             #if downloadable, get the higher quality, artist provided dl
             if track["downloadable"]:
-                self.dlfile(track["download_url"] + "?client_id=" + YOUR_CLIENT_ID, track, folder)
+                self.dlfile(track["download_url"] + "?client_id=" + YOUR_CLIENT_ID, track, folder, textBox)
             #else, dl streaming file @ 128kbps
             else:
-                self.dlfile(track["stream_url"] + "?client_id=" + YOUR_CLIENT_ID, track, folder)
+                self.dlfile(track["stream_url"] + "?client_id=" + YOUR_CLIENT_ID, track, folder, textBox)
             return True
 

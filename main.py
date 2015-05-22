@@ -9,8 +9,9 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QApplication, QDialog, QFileDialog
 from PyQt4.QtCore import QObject, pyqtSlot
 from gui import Ui_Form
+from dialog import Ui_Status
 
-#pyuic4 -x sounds.ui -o gui.py
+#pyuic4 -x download_dialog.ui -o dialog.py
 #link gui 
 #http://stackoverflow.com/a/9526625/3590748
 #use code
@@ -68,11 +69,20 @@ class Window(QtGui.QWidget):
     def downloadButton(self):
         if self.readyToGo:
             sound = Sounds(self.url, self.directory)
-            status = sound.download()
+            #takes in parent in constructor. (which is the widget,aka self)
+            Dialog = QtGui.QDialog(self)
+            ui = Ui_Status()
+            ui.setupUi(Dialog)
+            Dialog.show()
+            #set as read only
+            ui.statusTextEdit.setReadOnly(True)
+            ui.statusTextEdit.insertPlainText("Testing 123")
+
+            status = sound.download(ui)
             #returns true once download finishes
             if status:
-                print 'lol'
-                #show dialog?
+                print 'lol'             
+                
 
 
         else:
