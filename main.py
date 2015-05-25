@@ -7,7 +7,7 @@ import os
 import sys
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QApplication, QDialog, QFileDialog
-from PyQt4.QtCore import QObject, pyqtSlot
+from PyQt4.QtCore import QObject, pyqtSlot, pyqtSignal, QThread
 from gui import Ui_Form
 from dialog import Ui_Status
 
@@ -29,7 +29,7 @@ def main():
     window.show()
     sys.exit(app.exec_())
  
-    
+
     #url = raw_input("Hello, please paste your soundcloud url below" + os.linesep)
     #path = raw_input("Paste the path on your computer to download files to" + os.linesep)
     # url = window.directory
@@ -53,6 +53,10 @@ class Window(QtGui.QWidget):
         self.ui = Ui_Form()
         self.ui.setupUi(self)
 
+        self.dialog = Dialog(self)
+
+        
+
     def getDir(self):
         directory = QFileDialog.getExistingDirectory()
         print directory
@@ -65,28 +69,63 @@ class Window(QtGui.QWidget):
             self.url = string
             self.readyToGo = True
             print string
+            return self.url
 
     def downloadButton(self):
         if self.readyToGo:
+
+            self.dialog.show()
             sound = Sounds(self.url, self.directory)
-            #takes in parent in constructor. (which is the widget,aka self)
-            Dialog = QtGui.QDialog(self)
-            ui = Ui_Status()
-            ui.setupUi(Dialog)
-            Dialog.show()
-            #set as read only
-            ui.statusTextEdit.setReadOnly(True)
-            ui.statusTextEdit.insertPlainText("Testing 123")
 
-            status = sound.download(ui)
-            #returns true once download finishes
-            if status:
-                print 'lol'             
-                
-
-
+            # #set as read only
+            self.dialog.ui.statusTextEdit.setReadOnly(True)
+            self.dialog.ui.statusTextEdit.insertPlainText("Testing 123")
+            # status = sound.download(self.dialog_ui)
+            self.workerThread = WorkerThread(sound, self.dialog)
+            #connect finished() signal to my own slot
+            self.workerThread.finished.connect(self.downloadDone)
+            self.workerThread.start()
+                     
         else:
             print "u aint ready fuckboi"
+
+    def downloadDone(self):
+        print "we done boiz"
+        self.dialog.ui.statusTextEdit.appendPlainText("\n" + "Finished all downloads.")
+
+
+class Dialog (QDialog):
+
+    statusUpdate = pyqtSignal(str)
+
+    def __init__(self, parent = None):
+        self.parent = parent
+        QDialog.__init__(self, self.parent)
+        self.ui = Ui_Status()
+        self.ui.setupUi(self)
+        #stauts update signal
+
+        # Connect the trigger signal to a slot.
+        self.statusUpdate.connect(self.updateStatus)
+
+    def updateStatus(self, string):
+        print "what the fuk"
+        self.ui.statusTextEdit.appendPlainText(string)
+
+
+
+
+class WorkerThread(QThread):
+    def __init__(self, sound = None, dialog = None, parent = None):
+        super(WorkerThread, self).__init__(parent)
+        #sound class instance
+        #and dialog instance
+        self.sound = sound
+        self.dialog = dialog
+
+    def run(self):
+        status = self.sound.download(self.dialog)
+        
 
 
 

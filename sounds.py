@@ -9,6 +9,11 @@ from mutagen.mp3 import MP3
 from mutagen.easyid3 import EasyID3
 import mutagen.id3
 
+from dialog import Ui_Status
+from PyQt4 import QtCore, QtGui
+from PyQt4.QtGui import QApplication, QDialog, QFileDialog
+from PyQt4.QtCore import QObject, pyqtSlot
+
 YOUR_CLIENT_ID = "c585c5f24b092caec68984885cf2b0db"
 resolveUrl = "http://api.soundcloud.com/resolve.json?url="
 usersUrl = "http://api.soundcloud.com/users/"
@@ -39,12 +44,12 @@ class Sounds:
         #else, it is a song
         else: self.song = True
 
-    def dlfile(self, url,track, folder, textBox):        
+    def dlfile(self, url,track, folder):        
 
         title = track["title"]
-        
+        description = track["description"]
         #title = re.sub(r"[\\\/:\*\?""'<>|]", "_", title)
-        title = re.sub(r"(<|>|:|/|\\|\||\?|\*|\"|\.)", "_", title)
+        title = re.sub(r"(<|>|:|/|\\|\||\?|\*|\"|\.)", " ", title)
         artist = track["user"]["username"]
         
         #removing special char's from file name
@@ -79,7 +84,9 @@ class Sounds:
                     with open(file, "wb") as local_file:
                         local_file.write(f.read())
                         print "downloading " + url
-                        textBox.statusTextEdit.appendPlainText("Downloading " + title + " - " + artist )
+
+                        updateString = "Downloading... " + artist + " - " + title 
+                        self.dialog.statusUpdate.emit(updateString)
 
                         try:
                             mp3 = MP3(file, ID3=EasyID3)
@@ -87,17 +94,24 @@ class Sounds:
                             print "not an mp3, but thats ok cuz it has data??????"
                             print title
                             return
-
                         try:
                             mp3.add_tags(ID3=EasyID3)
                         except mutagen.id3.error:
                             print("has tags")
 
+                        #EasyID3.RegisterTextKey("title", "TIT2")
+                        #EasyID3.pprint()
+                        EasyID3.RegisterTextKey("lyrics", "USLT")
+
+
                         mp3['title'] = title
                         mp3['author'] = artist
                         mp3['artist'] = artist
+                        mp3["lyrics"] = description
                         mp3.save()
+
                         # mp3 = eyed3.load(file)
+                        # #need to catch if not mp3^^^?
                         # if mp3.tag is None:
                         #     print "tag is none"
                         #     mp3.tag = eyed3.id3.Tag()
@@ -125,7 +139,7 @@ class Sounds:
             track["error"] = "URL Error:" +  str(e.reason) + " " + url
             self.errors.append(track)
 
-    def download(self, textBox):
+    def download(self, dialog):
         #if playlist, gives you info with playlist info, "track_count" and array "tracks" with all tracks
         #if likes, gives only array with 50 likes
         #if track, gives track lol
@@ -133,6 +147,12 @@ class Sounds:
         res = urlopen(resolveUrl + self.url + "&client_id=" + YOUR_CLIENT_ID)
         resolved = json.load(res)
         res.close()
+
+        #setting dialog box as class property
+        self.dialog = dialog
+
+
+
         
         if self.likes:
             likes = []
@@ -168,14 +188,14 @@ class Sounds:
 
                 #if downloadable, get the higher quality, artist provided dl
                 if like["downloadable"]:
-                    self.dlfile(like["download_url"] + "?client_id=" + YOUR_CLIENT_ID, like, folder, textBox)
+                    self.dlfile(like["download_url"] + "?client_id=" + YOUR_CLIENT_ID, like, folder)
                 
                 elif "stream_url" not in like:
                     like["error"] = "doesn't have a stream url"
                     self.errors.append(like)
                 #else, dl streaming file @ 128kbps
                 else:
-                    self.dlfile(like["stream_url"] + "?client_id=" + YOUR_CLIENT_ID, like, folder, textBox)
+                    self.dlfile(like["stream_url"] + "?client_id=" + YOUR_CLIENT_ID, like, folder)
             return True
 
         #if playlist
@@ -196,13 +216,13 @@ class Sounds:
 
                 #if downloadable, get the higher quality, artist provided dl
                 if track["downloadable"]:
-                    self.dlfile(track["download_url"] + "?client_id=" + YOUR_CLIENT_ID, track, folder, textBox)
+                    self.dlfile(track["download_url"] + "?client_id=" + YOUR_CLIENT_ID, track, folder)
                 elif "stream_url" not in track:
                     track["error"] = "doesn't have a stream url"
                     self.errors.append(track)
                 #else, dl streaming file @ 128kbps
                 else:
-                    self.dlfile(track["stream_url"] + "?client_id=" + YOUR_CLIENT_ID,track, folder, textBox) 
+                    self.dlfile(track["stream_url"] + "?client_id=" + YOUR_CLIENT_ID,track, folder) 
             return True
 
         #if single track
@@ -219,9 +239,9 @@ class Sounds:
             
             #if downloadable, get the higher quality, artist provided dl
             if track["downloadable"]:
-                self.dlfile(track["download_url"] + "?client_id=" + YOUR_CLIENT_ID, track, folder, textBox)
+                self.dlfile(track["download_url"] + "?client_id=" + YOUR_CLIENT_ID, track, folder)
             #else, dl streaming file @ 128kbps
             else:
-                self.dlfile(track["stream_url"] + "?client_id=" + YOUR_CLIENT_ID, track, folder, textBox)
+                self.dlfile(track["stream_url"] + "?client_id=" + YOUR_CLIENT_ID, track, folder )
             return True
 
