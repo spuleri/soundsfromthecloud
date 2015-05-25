@@ -5,9 +5,9 @@ import re
 import eyed3
 import eyed3.id3
 
-from mutagen.mp3 import MP3
+from mutagen.mp3 import MP3, HeaderNotFoundError
 from mutagen.easyid3 import EasyID3
-import mutagen.id3
+from mutagen.id3 import ID3, TIT2, TIT3, TALB, TPE1, TRCK, TYER,USLT, APIC, error
 
 from dialog import Ui_Status
 from PyQt4 import QtCore, QtGui
@@ -48,6 +48,10 @@ class Sounds:
 
         title = track["title"]
         description = track["description"]
+        art_url = track["artwork_url"]
+        #to get 500x500 art insteasd of 100x100
+        art_url = art_url.replace("large", "t500x500")
+        print art_url
         #title = re.sub(r"[\\\/:\*\?""'<>|]", "_", title)
         title = re.sub(r"(<|>|:|/|\\|\||\?|\*|\"|\.)", " ", title)
         artist = track["user"]["username"]
@@ -55,6 +59,8 @@ class Sounds:
         #removing special char's from file name
         #filetitle = re.sub('[^A-Za-z0-9]+', '', title)
         file = folder+"/"+title+".mp3" 
+        #convert from utf-8 to unicode, instead of default ascii
+        #file.decode('utf-8')
         
 
 
@@ -89,26 +95,31 @@ class Sounds:
                         self.dialog.statusUpdate.emit(updateString)
 
                         try:
-                            mp3 = MP3(file, ID3=EasyID3)
-                        except mutagen.mp3.HeaderNotFoundError:
+                            mp3 = MP3(file, ID3=ID3)
+                        except HeaderNotFoundError:
                             print "not an mp3, but thats ok cuz it has data??????"
                             print title
                             return
                         try:
-                            mp3.add_tags(ID3=EasyID3)
-                        except mutagen.id3.error:
+                            mp3.add_tags(ID3=ID3)
+                        except error:
                             print("has tags")
 
-                        #EasyID3.RegisterTextKey("title", "TIT2")
-                        #EasyID3.pprint()
-                        EasyID3.RegisterTextKey("lyrics", "USLT")
+                        # EasyID3.RegisterTextKey("lyrics", "USLT")
+                        # EasyID3.RegisterTextKey("picture", "APIC")
 
+                        #good thred: http://stackoverflow.com/questions/14369366/assign-album-artwork-with-mutagen-mac-vs-pc
+                        art = urlopen(art_url)
+                        # art_file = open("cover.jpg", 'wb')
+                        # art_file.write(art.read())
+                        # art_file.close()
+                        mp3['TIT2'] = TIT2(encoding=3, text=title) #title
+                        mp3['TPE1'] = TPE1(encoding=3, text=artist) #artist
+                        mp3['USLT'] = USLT(encoding=3, desc=u'description', text=description) #lyrics, putting SC description in here
+                        mp3.tags.add( APIC( encoding=3, mime='image/jpeg', type=2, desc=u'Cover', data=art.read() ) )
+                        art.close()
 
-                        mp3['title'] = title
-                        mp3['author'] = artist
-                        mp3['artist'] = artist
-                        mp3["lyrics"] = description
-                        mp3.save()
+                        mp3.save(v2_version=3, v1=2)
 
                         # mp3 = eyed3.load(file)
                         # #need to catch if not mp3^^^?
@@ -203,11 +214,14 @@ class Sounds:
             set_tracks = resolved["tracks"]
 
             
-            #make new dir 
-            folder = self.path + "/" + resolved["user"]["username"] + "-" + resolved["title"]
+            #remove illegal characters
+            set_title = re.sub(r"(<|>|:|/|\\|\||\?|\*|\"|\.)", " ", resolved["title"])
+            #make new dir
+            folder = self.path + "/" + resolved["user"]["username"] + "-" + set_title
             try:
                 os.mkdir(folder)
             except OSError, e:
+                print e
                 print "alrdy haz dir"
 
             for index, track in enumerate(set_tracks):

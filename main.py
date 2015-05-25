@@ -1,4 +1,4 @@
-#!flask/bin/python
+# This Python file uses the following encoding: utf-8
 from sounds import Sounds
 import json
 import os
@@ -55,11 +55,16 @@ class Window(QtGui.QWidget):
 
         self.dialog = Dialog(self)
 
+        #connect QDialog finished slot, to see if pressed OK or CANCEL
+        self.dialog.finished.connect(self.dialogFinished)
+
         
 
     def getDir(self):
         directory = QFileDialog.getExistingDirectory()
+        directory = str(directory)
         print directory
+        print type(directory)
         self.directory = directory
         self.ui.dirLine.setText(self.directory)
 
@@ -68,7 +73,7 @@ class Window(QtGui.QWidget):
         if "https://soundcloud.com" in string:
             self.url = string
             self.readyToGo = True
-            print string
+            print self.url
             return self.url
 
     def downloadButton(self):
@@ -79,7 +84,7 @@ class Window(QtGui.QWidget):
 
             # #set as read only
             self.dialog.ui.statusTextEdit.setReadOnly(True)
-            self.dialog.ui.statusTextEdit.insertPlainText("Testing 123")
+            self.dialog.ui.statusTextEdit.insertPlainText("Loading data...")
             # status = sound.download(self.dialog_ui)
             self.workerThread = WorkerThread(sound, self.dialog)
             #connect finished() signal to my own slot
@@ -87,12 +92,43 @@ class Window(QtGui.QWidget):
             self.workerThread.start()
                      
         else:
-            print "u aint ready fuckboi"
+            print 'his'
+            #popup error box? if self.url="" or self.directory=""
 
     def downloadDone(self):
         print "we done boiz"
-        self.dialog.ui.statusTextEdit.appendPlainText("\n" + "Finished all downloads.")
+        mad = "(ノಠ益ಠ)ノ"
+        self.dialog.ui.statusTextEdit.appendPlainText("\n" + "Finished all downloads. " + mad)
 
+        #if sound object had errors
+        num_errors = len(self.workerThread.sound.errors)
+        if num_errors > 0:
+
+            
+            error_msg = "But there were " + str(num_errors) + " error(s)." + mad + "\n" + "Check the errors.txt file" + "\n"
+            self.dialog.ui.statusTextEdit.appendPlainText(error_msg)
+
+            f = open('errors.txt', 'wb')
+
+            for error in self.workerThread.sound.errors:
+                f.write(error["title"].decode('utf-8') +" -> " + error["permalink_url"] + "\n")
+                f.write(error["error"])
+                f.write("\n\n")
+
+        #after hit "OK" clear dialog statusTextEdit and clear url
+
+    def dialogFinished(self, value):
+        #the finished slot returns 1 for OK
+        #and 0 for cancel
+        if value == 1:
+            #reset url values
+            self.ui.lineEdit.clear()
+            self.url = ""
+            #clear dialog
+            self.dialog.ui.statusTextEdit.clear()
+
+
+ 
 
 class Dialog (QDialog):
 
@@ -109,7 +145,6 @@ class Dialog (QDialog):
         self.statusUpdate.connect(self.updateStatus)
 
     def updateStatus(self, string):
-        print "what the fuk"
         self.ui.statusTextEdit.appendPlainText(string)
 
 
@@ -124,7 +159,7 @@ class WorkerThread(QThread):
         self.dialog = dialog
 
     def run(self):
-        status = self.sound.download(self.dialog)
+        self.sound.download(self.dialog)
         
 
 
