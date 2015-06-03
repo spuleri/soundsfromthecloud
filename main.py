@@ -97,15 +97,15 @@ class Window(QtGui.QWidget):
 
     def downloadDone(self):
         print "we done boiz"
-        mad = "(ノಠ益ಠ)ノ"
-        self.dialog.ui.statusTextEdit.appendPlainText("\n" + "Finished all downloads. " + mad)
+        
+        self.dialog.ui.statusTextEdit.appendPlainText("\n" + "Finished all downloads. ")
 
         #if sound object had errors
         num_errors = len(self.workerThread.sound.errors)
         if num_errors > 0:
 
             
-            error_msg = "But there were " + str(num_errors) + " error(s)." + mad + "\n" + "Check the errors.txt file" + "\n"
+            error_msg = "But there were " + str(num_errors) + " error(s)." + "\n" + "Check the errors.txt file" + "\n"
             self.dialog.ui.statusTextEdit.appendPlainText(error_msg)
 
             f = open('errors.txt', 'wb')

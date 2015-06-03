@@ -20,14 +20,17 @@ usersUrl = "http://api.soundcloud.com/users/"
 
 class Sounds:
 
-    def __init__(self, url, path, likes=False, set=False, song = False):
+    def __init__(self, url, path, likes=False, set=False, song = False, user = False):
         self.url = url
         self.likes = likes
         self.set = set
         self.song = song
+        self.user = user
         self.errors = []
         #path to make new dir in
         self.path = path
+        #split url at /'s, returns a list
+        urlsplitted = self.url.split("/")
 
         if "likes" in self.url:
             self.likes = True
@@ -40,7 +43,14 @@ class Sounds:
                 self.userid = json.load(res)["id"]
                 res.close()
         #if its a playlist
-        if "sets" in self.url: self.set = True
+        elif "sets" in self.url:
+            self.set = True
+
+        #if the 2nd to last item in the split list is soundcloud.com
+        #assume it is a user         
+        elif (urlsplitted[-2] == "soundcloud.com"):
+            self.user = True
+
         #else, it is a song
         else: self.song = True
 
@@ -50,8 +60,11 @@ class Sounds:
         description = track["description"]
         art_url = track["artwork_url"]
         #to get 500x500 art insteasd of 100x100
-        art_url = art_url.replace("large", "t500x500")
-        print art_url
+        if art_url is not None:
+            art_url = art_url.replace("large", "t500x500")
+            has_art = True
+        else:
+            has_art = False
         #title = re.sub(r"[\\\/:\*\?""'<>|]", "_", title)
         title = re.sub(r"(<|>|:|/|\\|\||\?|\*|\"|\.)", " ", title)
         artist = track["user"]["username"]
@@ -86,38 +99,37 @@ class Sounds:
             #while loop just in case to catch file-name errors if they slip by.
             while True:
                 try:
+                    
+                    updateString = "Downloading... " + artist + " - " + title 
+                    self.dialog.statusUpdate.emit(updateString)
+                    #printing some titles fux up some ascii encoding
+                    # print updateString
                     # Open our local file for writing
                     with open(file, "wb") as local_file:
                         local_file.write(f.read())
-                        print "downloading " + url
-
-                        updateString = "Downloading... " + artist + " - " + title 
-                        self.dialog.statusUpdate.emit(updateString)
 
                         try:
                             mp3 = MP3(file, ID3=ID3)
                         except HeaderNotFoundError:
                             print "not an mp3, but thats ok cuz it has data??????"
-                            print title
                             return
                         try:
                             mp3.add_tags(ID3=ID3)
                         except error:
                             print("has tags")
 
-                        # EasyID3.RegisterTextKey("lyrics", "USLT")
-                        # EasyID3.RegisterTextKey("picture", "APIC")
+
 
                         #good thred: http://stackoverflow.com/questions/14369366/assign-album-artwork-with-mutagen-mac-vs-pc
-                        art = urlopen(art_url)
-                        # art_file = open("cover.jpg", 'wb')
-                        # art_file.write(art.read())
-                        # art_file.close()
+                        if has_art:
+                            art = urlopen(art_url)
+                            mp3.tags.add( APIC( encoding=3, mime='image/jpeg', type=2, desc=u'Cover', data=art.read() ) )
+                            art.close()
+
                         mp3['TIT2'] = TIT2(encoding=3, text=title) #title
                         mp3['TPE1'] = TPE1(encoding=3, text=artist) #artist
                         mp3['USLT'] = USLT(encoding=3, desc=u'description', text=description) #lyrics, putting SC description in here
-                        mp3.tags.add( APIC( encoding=3, mime='image/jpeg', type=2, desc=u'Cover', data=art.read() ) )
-                        art.close()
+
 
                         mp3.save(v2_version=3, v1=2)
 
@@ -210,7 +222,7 @@ class Sounds:
             return True
 
         #if playlist
-        if self.set:
+        elif self.set:
             set_tracks = resolved["tracks"]
 
             
@@ -225,9 +237,6 @@ class Sounds:
                 print "alrdy haz dir"
 
             for index, track in enumerate(set_tracks):
-
-
-
                 #if downloadable, get the higher quality, artist provided dl
                 if track["downloadable"]:
                     self.dlfile(track["download_url"] + "?client_id=" + YOUR_CLIENT_ID, track, folder)
@@ -239,8 +248,45 @@ class Sounds:
                     self.dlfile(track["stream_url"] + "?client_id=" + YOUR_CLIENT_ID,track, folder) 
             return True
 
+        #if artist acc
+        elif self.user:
+            print 'im an artist'
+
+            if resolved["kind"] == "user":
+                userid = resolved["id"]
+                artistRes = urlopen(usersUrl + str(userid) +"/tracks" + "?client_id=" + YOUR_CLIENT_ID)
+                artistData = json.load(artistRes)
+                artistRes.close()
+
+                #list of artists public uploaded tracks
+                artists_tracks = artistData
+                #make new dir
+                folder = self.path + "/" + resolved["username"] + "-" + "uploads"
+
+                try:
+                    os.mkdir(folder)
+                except OSError, e:
+                    print e
+                    print "alrdy haz dir"
+
+                for index, track in enumerate(artists_tracks):
+                    #if downloadable, get the higher quality, artist provided dl
+                    if track["downloadable"]:
+                        self.dlfile(track["download_url"] + "?client_id=" + YOUR_CLIENT_ID, track, folder)
+                    elif "stream_url" not in track:
+                        track["error"] = "doesn't have a stream url"
+                        self.errors.append(track)
+                    #else, dl streaming file @ 128kbps
+                    else:
+                        self.dlfile(track["stream_url"] + "?client_id=" + YOUR_CLIENT_ID,track, folder)
+                return True
+
+
+            else: return False
+
+
         #if single track
-        if self.song:
+        elif self.song:
             print 'hi'
 
             track = resolved
