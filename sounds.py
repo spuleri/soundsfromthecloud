@@ -144,13 +144,15 @@ class Sounds:
                         # mp3.tag.track_num = index + 1
                         # mp3.tag.save()
 
-                except IOError:
+                except IOError, e:
                     #if get this error, means invalid file name
                     #LAST RESORT..
                     #remove everything except letters and numbers.
+                    print 'got a damn io error'
+                    print e
                     title = re.sub('[^a-zA-Z0-9\n\.]', "", title)
                     file = folder+"/"+title+".mp3"
-                    continue
+                    continue                
                 break 
 
 
@@ -227,9 +229,13 @@ class Sounds:
 
             
             #remove illegal characters
-            set_title = re.sub(r"(<|>|:|/|\\|\||\?|\*|\"|\.)", " ", resolved["title"])
+            set_title = re.sub(r"(<|>|:|/|\\|\||\?|\*|\"|\.)", "", resolved["title"])
             #make new dir
-            folder = self.path + "/" + resolved["user"]["username"] + "-" + set_title
+            if re.search(r"(<|>|:|/|\\|\||\?|\*|\"|\.)", resolved["user"]["username"]) == None:
+                artist_title = resolved["user"]["username"]
+
+            else: artist_title = resolved["user"]["permalink"]
+            folder = self.path + "/" + artist_title + "-" + set_title
             try:
                 os.mkdir(folder)
             except OSError, e:
@@ -260,8 +266,13 @@ class Sounds:
 
                 #list of artists public uploaded tracks
                 artists_tracks = artistData
+
+                if re.search(r"(<|>|:|/|\\|\||\?|\*|\"|\.)", str(resolved["username"])) == None:
+                    artist_title = resolved["username"]
+
+                else: artist_title = resolved["permalink"]
                 #make new dir
-                folder = self.path + "/" + resolved["username"] + "-" + "uploads"
+                folder = self.path + "/" + artist_title + "-" + "uploads"
 
                 try:
                     os.mkdir(folder)
