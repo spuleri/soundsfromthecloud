@@ -11,72 +11,86 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>soundsfromthecloud</string>
   </property>
-  <widget class="QPushButton" name="downloadButton">
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>202</x>
+     <y>10</y>
+     <width>161</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>***Please support the artists***</string>
+   </property>
+  </widget>
+  <widget class="QSplitter" name="splitter">
    <property name="geometry">
     <rect>
      <x>190</x>
      <y>320</y>
-     <width>141</width>
+     <width>201</width>
      <height>41</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Download!</string>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
    </property>
+   <widget class="QPushButton" name="downloadButton">
+    <property name="text">
+     <string>Download!</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="text">
+     <string>Clear Fields</string>
+    </property>
+   </widget>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>50</x>
-     <y>140</y>
-     <width>461</width>
-     <height>41</height>
+     <x>60</x>
+     <y>150</y>
+     <width>411</width>
+     <height>93</height>
     </rect>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_3">
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Directory to download:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="dirLine"/>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QToolButton" name="fileButton">
+   <layout class="QFormLayout" name="formLayout">
+    <property name="fieldGrowthPolicy">
+     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+    </property>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_2">
       <property name="text">
-       <string>...</string>
+       <string>Directory to download:</string>
       </property>
      </widget>
     </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>51</x>
-     <y>181</y>
-     <width>421</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
+    <item row="1" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLineEdit" name="dirLine"/>
+      </item>
+      <item>
+       <widget class="QToolButton" name="fileButton">
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="5" column="0">
      <widget class="QLabel" name="label">
       <property name="text">
        <string>SoundCloud URL:</string>
       </property>
      </widget>
     </item>
-    <item>
+    <item row="5" column="1">
      <widget class="QLineEdit" name="lineEdit"/>
     </item>
    </layout>
@@ -84,7 +98,10 @@
   <zorder>downloadButton</zorder>
   <zorder>layoutWidget</zorder>
   <zorder>layoutWidget</zorder>
-  <zorder>lineEdit</zorder>
+  <zorder>pushButton</zorder>
+  <zorder>label_3</zorder>
+  <zorder>dirLine</zorder>
+  <zorder>fileButton</zorder>
  </widget>
  <resources/>
  <connections>
@@ -111,7 +128,7 @@
    <slot>downloadButton()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>275</x>
+     <x>245</x>
      <y>337</y>
     </hint>
     <hint type="destinationlabel">
@@ -149,6 +166,38 @@
     <hint type="destinationlabel">
      <x>182</x>
      <y>184</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>lineEdit</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>327</x>
+     <y>336</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>437</x>
+     <y>187</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>dirLine</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>304</x>
+     <y>339</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>413</x>
+     <y>162</y>
     </hint>
    </hints>
   </connection>

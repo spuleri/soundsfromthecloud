@@ -2,17 +2,13 @@ from urllib2 import urlopen, URLError, HTTPError
 import json
 import os
 import re
-import eyed3
-import eyed3.id3
+
 
 from mutagen.mp3 import MP3, HeaderNotFoundError
-from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3, TIT2, TIT3, TALB, TPE1, TRCK, TYER,USLT, APIC, error
 
 from dialog import Ui_Status
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import QApplication, QDialog, QFileDialog
-from PyQt4.QtCore import QObject, pyqtSlot
+
 
 YOUR_CLIENT_ID = "c585c5f24b092caec68984885cf2b0db"
 resolveUrl = "http://api.soundcloud.com/resolve.json?url="
@@ -133,16 +129,6 @@ class Sounds:
 
                         mp3.save(v2_version=3, v1=2)
 
-                        # mp3 = eyed3.load(file)
-                        # #need to catch if not mp3^^^?
-                        # if mp3.tag is None:
-                        #     print "tag is none"
-                        #     mp3.tag = eyed3.id3.Tag()
-                        #     mp3.tag.file_info = eyed3.id3.FileInfo(file)
-                        # mp3.tag.artist = artist
-                        # mp3.tag.title = title 
-                        # mp3.tag.track_num = index + 1
-                        # mp3.tag.save()
 
                 except IOError, e:
                     #if get this error, means invalid file name
