@@ -18,20 +18,23 @@ A tool to download songs from [SoundCloud](https://soundcloud.com). If you come 
 
 ## Screenshots
 
+![image](https://raw.githubusercontent.com/spuleri/soundsfromthecloud/desktop/assets/soundsfromthecloud.png)
+
+![image](https://raw.githubusercontent.com/spuleri/soundsfromthecloud/desktop/assets/soundsfromthecloud2.png)
 
 ## Downloads
 
 #### Windows
-* Download zip: https://www.dropbox.com/s/u5ovgpglrtsp1uh/soundsfromthecloud.zip?dl=0
+* Download zip [here](https://www.dropbox.com/s/u5ovgpglrtsp1uh/soundsfromthecloud.zip?dl=0)
 * extract
 * double click main.exe
 
 #### Mac OSX
-* Download dmg: https://www.dropbox.com/s/kn5hx0l3ge9iz02/soundsfromthecloud.dmg?dl=0
+* Download dmg [here](https://www.dropbox.com/s/kn5hx0l3ge9iz02/soundsfromthecloud.dmg?dl=0)
 * double click soundsfromcloud.dmg, drag .app to applications folder
 
 #### Source
-* Clone this repo
+* Clone [this](https://github.com/spuleri/soundsfromthecloud) repo
 * Install [PyQt4](http://www.riverbankcomputing.com/software/pyqt/download) and [mutagen](https://mutagen.readthedocs.org/en/latest/)
 * ```python main.py```
 
