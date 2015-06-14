@@ -18,6 +18,8 @@ A tool to download songs from [SoundCloud](https://soundcloud.com). If you come 
 
 ## Screenshots
 
+![image](https://raw.githubusercontent.com/spuleri/soundsfromthecloud/desktop/assets/soundsfromthecloud.png)
+
 
 ## Downloads
 
